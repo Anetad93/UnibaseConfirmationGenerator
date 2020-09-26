@@ -36,6 +36,16 @@ function getUsers() {
     });
 }
 
+function getCurrentResidents() {
+    return sendRequest("POST", "51", "").then(result => {
+        return result.text().then(html => {
+            let root = parseHtml(html);
+            return root;
+        })
+    });
+}
+
 module.exports = {
     getUsers,
+    getCurrentResidents,
 }
