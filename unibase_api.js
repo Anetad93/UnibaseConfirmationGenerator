@@ -1,12 +1,12 @@
 const fetch = require('node-fetch');
 const parseHtml = require('node-html-parser').parse
 
-function sendRequest(method, endpoint, body) {
+async function sendRequest(method, endpoint, body) {
     const url = "https://r.unibase.pl/" + endpoint;
 
     console.log(`fetching ${url}...`)
 
-    const resp = fetch(url, {
+    let result = await fetch(url, {
         "credentials": "include",
         "headers": {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -27,14 +27,12 @@ function sendRequest(method, endpoint, body) {
         "mode": "cors",
     });
 
-    return resp.then(result => {
-        return result.text().then(html => {
-            console.log(`${url} fetched`)
+    let html = await result.text();
 
-            let root = parseHtml(html);
-            return root;
-        })
-    });
+    console.log(`${url} fetched`);
+
+    let root = parseHtml(html);
+    return root;
 }
 
 function getUsers() {
