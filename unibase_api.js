@@ -3,6 +3,9 @@ const parseHtml = require('node-html-parser').parse
 
 function sendRequest(method, endpoint, body) {
     const url = "https://r.unibase.pl/" + endpoint;
+
+    console.log(`fetching ${url}...`)
+
     const resp = fetch(url, {
         "credentials": "include",
         "headers": {
@@ -24,25 +27,22 @@ function sendRequest(method, endpoint, body) {
         "mode": "cors",
     });
 
-    return resp;
+    return resp.then(result => {
+        return result.text().then(html => {
+            console.log(`${url} fetched`)
+
+            let root = parseHtml(html);
+            return root;
+        })
+    });
 }
 
 function getUsers() {
-    return sendRequest("POST", "55", "").then(result => {
-        return result.text().then(html => {
-            let root = parseHtml(html);
-            return root;
-        })
-    });
+    return sendRequest("POST", "55", "");
 }
 
 function getCurrentResidents() {
-    return sendRequest("POST", "51", "").then(result => {
-        return result.text().then(html => {
-            let root = parseHtml(html);
-            return root;
-        })
-    });
+    return sendRequest("POST", "51", "");
 }
 
 module.exports = {
