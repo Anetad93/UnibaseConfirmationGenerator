@@ -26,11 +26,12 @@ function getAddress(childNodes) {
 }
 
 async function main() {
-    console.log("fetching users...")
-    let root_users = await unibase_api.getUsers()
-    console.log("users fetched, fetching current residents...")
-    let root_currentResidents = await unibase_api.getCurrentResidents()
-    console.log("current residents fetched, processing data...")
+    console.log("fetching users and current residents...")
+    let [root_users, root_currentResidents] = await Promise.all([
+        unibase_api.getUsers(),
+        unibase_api.getCurrentResidents(),
+    ])
+    console.log("fetched, processing data...")
 
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Confirmation');
