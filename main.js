@@ -26,7 +26,9 @@ function getAddress(childNodes) {
 }
 
 async function main() {
+    console.log("fetching users...")
     let root = await unibase_api.getUsers()
+    console.log("users fetched, processing data...")
 
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Confirmation');
@@ -67,7 +69,9 @@ async function main() {
         }
     }
 
+    console.log("fetching current residents...")
     root = await unibase_api.getCurrentResidents()
+    console.log("current residents fetched, processing data...")
 
     for (let row of root.querySelectorAll("tbody tr")) {
         let uid = parseInt(row.childNodes[1].rawText)
@@ -90,6 +94,7 @@ async function main() {
     }
 
     await workbook.xlsx.writeFile('dane_o_mieszkancach.xlsx');
+    console.log("Excel saved")
 }
 
 main()
