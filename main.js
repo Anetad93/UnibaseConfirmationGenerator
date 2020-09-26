@@ -19,7 +19,7 @@ function extractCountryAndDocumentId(childNodes) {
 
 function getAddress(childNodes) {
     if (childNodes.length !== 0) {
-        return childNodes[0].rawText + ", " + childNodes[2].rawText
+        return `${childNodes[0].rawText}, ${childNodes[2].rawText}`
     } else {
         return ""
     }
