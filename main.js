@@ -18,11 +18,7 @@ function extractCountryAndDocumentId(childNodes) {
 }
 
 function getAddress(childNodes) {
-    if (childNodes.length !== 0) {
-        return `${childNodes[0].rawText}, ${childNodes[2].rawText}`
-    } else {
-        return ""
-    }
+    return childNodes.length === 0 ? "" : `${childNodes[0].rawText}, ${childNodes[2].rawText}`
 }
 
 async function main() {
