@@ -27,8 +27,10 @@ function getAddress(childNodes) {
 
 async function main() {
     console.log("fetching users...")
-    let root = await unibase_api.getUsers()
-    console.log("users fetched, processing data...")
+    let root_users = await unibase_api.getUsers()
+    console.log("users fetched, fetching current residents...")
+    let root_currentResidents = await unibase_api.getCurrentResidents()
+    console.log("current residents fetched, processing data...")
 
     let workbook = new Excel.Workbook();
     let worksheet = workbook.addWorksheet('Confirmation');
@@ -47,7 +49,7 @@ async function main() {
 
     let rowNumber = 1
 
-    for (let row of root.querySelectorAll("tbody tr")) {
+    for (let row of root_users.querySelectorAll("tbody tr")) {
         let uid = parseInt(row.childNodes[1].rawText)
         let name = row.childNodes[3].rawText
         let address = getAddress(row.childNodes[13].childNodes)
@@ -69,11 +71,7 @@ async function main() {
         worksheet.getCell(rowNumber, 6).value = dateOfBirth
     }
 
-    console.log("fetching current residents...")
-    root = await unibase_api.getCurrentResidents()
-    console.log("current residents fetched, processing data...")
-
-    for (let row of root.querySelectorAll("tbody tr")) {
+    for (let row of root_currentResidents.querySelectorAll("tbody tr")) {
         let uid = parseInt(row.childNodes[1].rawText)
         let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
         let country = row.childNodes[13].rawText
