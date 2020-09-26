@@ -41,13 +41,12 @@ unibase_api.getUsers().then(root => {
     worksheet.getCell(1, 10).value = "Start umowy";
     worksheet.getCell(1, 11).value = "Koniec umowy";
 
-    let a = 2
+    let rowNumber = 2
 
     for (let row of root.querySelectorAll("tbody tr")) {
         let uid = parseInt(row.childNodes[1].rawText)
         let name = row.childNodes[3].rawText
         let address = getAddress(row.childNodes[13].childNodes)
-        // row.childNodes[13].childNodes[0].rawText + ", " + row.childNodes[13].childNodes[2].rawText
         let [country, passportNumber] = extractCountryAndDocumentId(row.childNodes[15].childNodes)
         let dateOfBirth = row.childNodes[7].rawText
         // let identificator = row.childNodes[15].lastChild.textContent
@@ -55,21 +54,18 @@ unibase_api.getUsers().then(root => {
 
         if (address === "" || passportNumber === "") {
         } else {
-            worksheet.getCell(a, 1).value = uid
-            worksheet.getCell(a, 2).value = name
-            worksheet.getCell(a, 3).value = address
-            worksheet.getCell(a, 4).value = passportNumber
-            worksheet.getCell(a, 5).value = country
-            worksheet.getCell(a, 6).value = dateOfBirth
+            worksheet.getCell(rowNumber, 1).value = uid
+            worksheet.getCell(rowNumber, 2).value = name
+            worksheet.getCell(rowNumber, 3).value = address
+            worksheet.getCell(rowNumber, 4).value = passportNumber
+            worksheet.getCell(rowNumber, 5).value = country
+            worksheet.getCell(rowNumber, 6).value = dateOfBirth
 
-            a++
+            rowNumber++
         }
     }
 
     unibase_api.getCurrentResidents().then(root => {
-
-        let a = 2
-
         for (let row of root.querySelectorAll("tbody tr")) {
             let uid = parseInt(row.childNodes[1].rawText)
             let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
@@ -88,9 +84,8 @@ unibase_api.getUsers().then(root => {
                     worksheet.getCell(i, 11).value = dateOfEndAgreement
                 }
             }
-            a++
         }
-        workbook.xlsx.writeFile('test4.xlsx');
+        workbook.xlsx.writeFile('dane_o_mieszkancach.xlsx');
     }).catch(err => console.log(err));
 })
 
