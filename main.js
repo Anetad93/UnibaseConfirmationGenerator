@@ -3,17 +3,17 @@ const Excel = require('exceljs');
 const unibase_api = require("./unibase_api")
 
 function extractCountryAndDocumentId(childNodes) {
-
-    if (childNodes.length === 3) {
-        return [childNodes[0].rawText, childNodes[2].rawText]
-    } else if (childNodes.length === 2) {
-        if (childNodes[0].tagName === 'br') {
-            return ["", childNodes[1].rawText]
-        } else {
-            return [childNodes[0].rawText, ""]
-        }
-    } else {
-        return ["tu", "tu"]
+    switch (childNodes.length){
+        case 3:
+            return [childNodes[0].rawText, childNodes[2].rawText];
+        case 2:
+            if (childNodes[0].tagName === 'br') {
+                return ["", childNodes[1].rawText]
+            } else {
+                return [childNodes[0].rawText, ""]
+            }
+        default:
+            return ["tu", "tu"]
     }
 }
 
