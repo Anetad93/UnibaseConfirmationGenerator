@@ -25,70 +25,71 @@ function getAddress(childNodes) {
     }
 }
 
-function main() {
-    unibase_api.getUsers().then(root => {
-        let workbook = new Excel.Workbook();
-        let worksheet = workbook.addWorksheet('Confirmation');
+async function main() {
+    let root = await unibase_api.getUsers()
 
-        worksheet.getCell(1, 1).value = "UiD";
-        worksheet.getCell(1, 2).value = "Nazwisko i imię";
-        worksheet.getCell(1, 3).value = "Adres";
-        worksheet.getCell(1, 4).value = "Numer paszportu";
-        worksheet.getCell(1, 5).value = "Kraj";
-        worksheet.getCell(1, 6).value = "Data urodzenia";
-        worksheet.getCell(1, 7).value = "Płeć";
-        worksheet.getCell(1, 8).value = "Numer pokoju";
-        worksheet.getCell(1, 9).value = "Rozmiar pokoju";
-        worksheet.getCell(1, 10).value = "Start umowy";
-        worksheet.getCell(1, 11).value = "Koniec umowy";
+    let workbook = new Excel.Workbook();
+    let worksheet = workbook.addWorksheet('Confirmation');
 
-        let rowNumber = 2
+    worksheet.getCell(1, 1).value = "UiD";
+    worksheet.getCell(1, 2).value = "Nazwisko i imię";
+    worksheet.getCell(1, 3).value = "Adres";
+    worksheet.getCell(1, 4).value = "Numer paszportu";
+    worksheet.getCell(1, 5).value = "Kraj";
+    worksheet.getCell(1, 6).value = "Data urodzenia";
+    worksheet.getCell(1, 7).value = "Płeć";
+    worksheet.getCell(1, 8).value = "Numer pokoju";
+    worksheet.getCell(1, 9).value = "Rozmiar pokoju";
+    worksheet.getCell(1, 10).value = "Start umowy";
+    worksheet.getCell(1, 11).value = "Koniec umowy";
 
-        for (let row of root.querySelectorAll("tbody tr")) {
-            let uid = parseInt(row.childNodes[1].rawText)
-            let name = row.childNodes[3].rawText
-            let address = getAddress(row.childNodes[13].childNodes)
-            let [country, passportNumber] = extractCountryAndDocumentId(row.childNodes[15].childNodes)
-            let dateOfBirth = row.childNodes[7].rawText
-            // let identificator = row.childNodes[15].lastChild.textContent
-            // let balance = parseFloat(row.childNodes[27].rawText.replace(/[,.]/g, m => (m === ',' ? '.' : ',')))
+    let rowNumber = 2
 
-            if (address === "" || passportNumber === "") {
-            } else {
-                worksheet.getCell(rowNumber, 1).value = uid
-                worksheet.getCell(rowNumber, 2).value = name
-                worksheet.getCell(rowNumber, 3).value = address
-                worksheet.getCell(rowNumber, 4).value = passportNumber
-                worksheet.getCell(rowNumber, 5).value = country
-                worksheet.getCell(rowNumber, 6).value = dateOfBirth
+    for (let row of root.querySelectorAll("tbody tr")) {
+        let uid = parseInt(row.childNodes[1].rawText)
+        let name = row.childNodes[3].rawText
+        let address = getAddress(row.childNodes[13].childNodes)
+        let [country, passportNumber] = extractCountryAndDocumentId(row.childNodes[15].childNodes)
+        let dateOfBirth = row.childNodes[7].rawText
+        // let identificator = row.childNodes[15].lastChild.textContent
+        // let balance = parseFloat(row.childNodes[27].rawText.replace(/[,.]/g, m => (m === ',' ? '.' : ',')))
 
-                rowNumber++
+        if (address === "" || passportNumber === "") {
+        } else {
+            worksheet.getCell(rowNumber, 1).value = uid
+            worksheet.getCell(rowNumber, 2).value = name
+            worksheet.getCell(rowNumber, 3).value = address
+            worksheet.getCell(rowNumber, 4).value = passportNumber
+            worksheet.getCell(rowNumber, 5).value = country
+            worksheet.getCell(rowNumber, 6).value = dateOfBirth
+
+            rowNumber++
+        }
+    }
+
+    root = await unibase_api.getCurrentResidents()
+
+    for (let row of root.querySelectorAll("tbody tr")) {
+        let uid = parseInt(row.childNodes[1].rawText)
+        let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
+        let country = row.childNodes[13].rawText
+        let room = row.childNodes[17].rawText
+        let sizeOfRoom = parseInt(row.childNodes[19].rawText)
+        let dateOfStartAgreement = row.childNodes[21].rawText
+        let dateOfEndAgreement = row.childNodes[23].rawText
+
+        for (let i = 2; worksheet.getCell(i, 1).value !== null; i++) {
+            if (worksheet.getCell(i, 1).value === uid) {
+                worksheet.getCell(i, 7).value = sex
+                worksheet.getCell(i, 8).value = room
+                worksheet.getCell(i, 9).value = sizeOfRoom
+                worksheet.getCell(i, 10).value = dateOfStartAgreement
+                worksheet.getCell(i, 11).value = dateOfEndAgreement
             }
         }
+    }
 
-        unibase_api.getCurrentResidents().then(root => {
-            for (let row of root.querySelectorAll("tbody tr")) {
-                let uid = parseInt(row.childNodes[1].rawText)
-                let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
-                let country = row.childNodes[13].rawText
-                let room = row.childNodes[17].rawText
-                let sizeOfRoom = parseInt(row.childNodes[19].rawText)
-                let dateOfStartAgreement = row.childNodes[21].rawText
-                let dateOfEndAgreement = row.childNodes[23].rawText
-
-                for (let i = 2; worksheet.getCell(i, 1).value !== null; i++) {
-                    if (worksheet.getCell(i, 1).value === uid) {
-                        worksheet.getCell(i, 7).value = sex
-                        worksheet.getCell(i, 8).value = room
-                        worksheet.getCell(i, 9).value = sizeOfRoom
-                        worksheet.getCell(i, 10).value = dateOfStartAgreement
-                        worksheet.getCell(i, 11).value = dateOfEndAgreement
-                    }
-                }
-            }
-            workbook.xlsx.writeFile('dane_o_mieszkancach.xlsx');
-        }).catch(err => console.log(err));
-    })
+    await workbook.xlsx.writeFile('dane_o_mieszkancach.xlsx');
 }
 
 main()
