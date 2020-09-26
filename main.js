@@ -66,41 +66,31 @@ unibase_api.getUsers().then(root => {
         }
     }
 
-    workbook.xlsx.writeFile('test3.xlsx').then(() => {
+    unibase_api.getCurrentResidents().then(root => {
 
-        unibase_api.getCurrentResidents().then(root => {
-            let workbook = new Excel.Workbook();
+        let a = 2
 
-            workbook.xlsx.readFile("test3.xlsx").then(() => {
-                let worksheet = workbook.getWorksheet("Confirmation");
+        for (let row of root.querySelectorAll("tbody tr")) {
+            let uid = parseInt(row.childNodes[1].rawText)
+            let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
+            let country = row.childNodes[13].rawText
+            let room = row.childNodes[17].rawText
+            let sizeOfRoom = parseInt(row.childNodes[19].rawText)
+            let dateOfStartAgreement = row.childNodes[21].rawText
+            let dateOfEndAgreement = row.childNodes[23].rawText
 
-                let a = 2
-
-                for (let row of root.querySelectorAll("tbody tr")) {
-                    let uid = parseInt(row.childNodes[1].rawText)
-                    let sex = parseInt(row.childNodes[5].rawText) // 1 to dziewczyna, 2 chłopak
-                    let country = row.childNodes[13].rawText
-                    let room = row.childNodes[17].rawText
-                    let sizeOfRoom = parseInt(row.childNodes[19].rawText)
-                    let dateOfStartAgreement = row.childNodes[21].rawText
-                    let dateOfEndAgreement = row.childNodes[23].rawText
-
-                    for (let i = 2; worksheet.getCell(i, 1).value !== null; i++) {
-                        if (worksheet.getCell(i, 1).value === uid) {
-                            worksheet.getCell(i, 7).value = sex
-                            worksheet.getCell(i, 8).value = room
-                            worksheet.getCell(i, 9).value = sizeOfRoom
-                            worksheet.getCell(i, 10).value = dateOfStartAgreement
-                            worksheet.getCell(i, 11).value = dateOfEndAgreement
-                        }
-                    }
-                    a++
+            for (let i = 2; worksheet.getCell(i, 1).value !== null; i++) {
+                if (worksheet.getCell(i, 1).value === uid) {
+                    worksheet.getCell(i, 7).value = sex
+                    worksheet.getCell(i, 8).value = room
+                    worksheet.getCell(i, 9).value = sizeOfRoom
+                    worksheet.getCell(i, 10).value = dateOfStartAgreement
+                    worksheet.getCell(i, 11).value = dateOfEndAgreement
                 }
-                workbook.xlsx.writeFile('test4.xlsx');
-            }).catch(err => console.log(err));
-
-        })
-
-    });
+            }
+            a++
+        }
+        workbook.xlsx.writeFile('test4.xlsx');
+    }).catch(err => console.log(err));
 })
 
