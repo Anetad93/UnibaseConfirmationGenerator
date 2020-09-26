@@ -45,7 +45,7 @@ async function main() {
     worksheet.getCell(1, 10).value = "Start umowy";
     worksheet.getCell(1, 11).value = "Koniec umowy";
 
-    let rowNumber = 2
+    let rowNumber = 1
 
     for (let row of root.querySelectorAll("tbody tr")) {
         let uid = parseInt(row.childNodes[1].rawText)
@@ -56,17 +56,17 @@ async function main() {
         // let identificator = row.childNodes[15].lastChild.textContent
         // let balance = parseFloat(row.childNodes[27].rawText.replace(/[,.]/g, m => (m === ',' ? '.' : ',')))
 
-        if (address === "" || passportNumber === "") {
-        } else {
-            worksheet.getCell(rowNumber, 1).value = uid
-            worksheet.getCell(rowNumber, 2).value = name
-            worksheet.getCell(rowNumber, 3).value = address
-            worksheet.getCell(rowNumber, 4).value = passportNumber
-            worksheet.getCell(rowNumber, 5).value = country
-            worksheet.getCell(rowNumber, 6).value = dateOfBirth
+        rowNumber++
 
-            rowNumber++
-        }
+        if (address === "" || passportNumber === "")
+            continue
+
+        worksheet.getCell(rowNumber, 1).value = uid
+        worksheet.getCell(rowNumber, 2).value = name
+        worksheet.getCell(rowNumber, 3).value = address
+        worksheet.getCell(rowNumber, 4).value = passportNumber
+        worksheet.getCell(rowNumber, 5).value = country
+        worksheet.getCell(rowNumber, 6).value = dateOfBirth
     }
 
     console.log("fetching current residents...")
