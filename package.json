@@ -7,7 +7,8 @@
     "docx-pdf": "0.0.1",
     "docxtemplater": "^3.17.6",
     "exceljs": "^3.9.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "node-html-parser": "^1.2.21"
   },
   "devDependencies": {},
   "scripts": {},
